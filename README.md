@@ -4,6 +4,9 @@ This bot shows how Interactive Messages can be made in GitHub using [Probot](htt
 
 It is just a simple barista that is invoked by commenting on an Issue with the text `/coffee`.
 
+See [integrations/slack#433](https://github.com/integrations/slack/pull/433#issuecomment-371392146) for discussion on this approach.
+
+
 # Try it out
 
 Go to the [Test Issue](https://github.com/philschatz/barista-bot/issues/1) and **Create a comment** that begins with `/coffee`.
