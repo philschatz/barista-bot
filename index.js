@@ -41,16 +41,31 @@ module.exports = (robot) => {
               type: 'select',
               text: 'Select the type of milk you want',
               options: [
-                { text: 'Skim', value: await command.extendState({orderStep: 'FINISH', milkType: 'skim'}) },
-                { text: '2%',   value: await command.extendState({orderStep: 'FINISH', milkType: '2%'}) },
-                { text: 'Soy',  value: await command.extendState({orderStep: 'FINISH', milkType: 'soy'}) },
+                { text: 'Skim', value: await command.extendState({orderStep: 'CHOOSE_SUGAR', milkType: 'skim'}) },
+                { text: '2%',   value: await command.extendState({orderStep: 'CHOOSE_SUGAR', milkType: '2%'}) },
+                { text: 'Soy',  value: await command.extendState({orderStep: 'CHOOSE_SUGAR', milkType: 'soy'}) },
               ]
+            }
+          ]
+        })
+      } else if (state['orderStep'] === 'CHOOSE_SUGAR') {
+        return command.editResponse(previousMessageToken, `:white_check_mark: **${state['coffeeType']}**\n:white_check_mark: **${state['milkType']} milk**\nWould you like sugar?`, {
+          attachments: [
+            {
+              type: 'button',
+              text: 'Yes please!',
+              value: await command.extendState({orderStep: 'FINISH', sugar: 'sugar'})
+            },
+            {
+              type: 'button',
+              text: 'No thank you',
+              value: await command.extendState({orderStep: 'FINISH', sugar: 'no sugar'})
             }
           ]
         })
       } else {
         // clear the state upon sending this message because we are done.
-        return command.finish(previousMessageToken, `:white_check_mark: **${state['coffeeType']}**\n:white_check_mark: **${state['milkType']} milk**\nYour ${state['coffeeType']} with ${state['milkType']} milk is ready!\n:coffee:`)
+        return command.finish(previousMessageToken, `:white_check_mark: **${state['coffeeType']}**\n:white_check_mark: **${state['milkType']} milk**\n:white_check_mark: **${state['sugar']}**\nYour ${state['coffeeType']} with ${state['milkType']} milk with ${state['sugar']} is ready!\n:coffee:`)
       }
     }
   })

@@ -25,7 +25,7 @@ ${this.getOptionsMarkdown(id)}
       return this.options.attachments.map((attachment) => {
         const {type, color, text, value /*for a button*/, options /*for a select*/} = attachment
         if (type === 'button') {
-          return `[${text}](${ROOT_URL}/commands/github?id=${id}&state=${encodeURIComponent(JSON.stringify(value))})`
+          return `[[${text}]](${ROOT_URL}/commands/github?id=${id}&state=${encodeURIComponent(JSON.stringify(value))})`
         } else if (type === 'select') {
           const optionsMarkdown = options.map((option) => {
             return `- [${option.text}](${ROOT_URL}/commands/github?id=${id}&state=${encodeURIComponent(JSON.stringify(option.value))})`
