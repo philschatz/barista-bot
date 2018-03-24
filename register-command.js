@@ -1,4 +1,6 @@
 // Modified from https://github.com/probot/commands/blob/master/index.js
+const ROOT_URL = process.env['ROOT_URL'] || 'http://localhost:3000'
+
 class CommandResponse {
   constructor(previousMessageToken, text, options) {
     this.previousMessageToken = previousMessageToken
@@ -23,10 +25,10 @@ ${this.getOptionsMarkdown()}
       return this.options.attachments.map((attachment) => {
         const {type, color, text, value /*for a button*/, options /*for a select*/} = attachment
         if (type === 'button') {
-          return `[${text}](http://localhost:3000/commands/github?state=${encodeURIComponent(JSON.stringify(value))})`
+          return `[${text}](${ROOT_URL}/commands/github?state=${encodeURIComponent(JSON.stringify(value))})`
         } else if (type === 'select') {
           const optionsMarkdown = options.map((option) => {
-            return `- [${option.text}](http://localhost:3000/commands/github?state=${encodeURIComponent(JSON.stringify(option.value))})`
+            return `- [${option.text}](${ROOT_URL}/commands/github?state=${encodeURIComponent(JSON.stringify(option.value))})`
           }).join('\n')
           return `${text} _(select one of the following)_\n\n${optionsMarkdown}\n`
         } else {
