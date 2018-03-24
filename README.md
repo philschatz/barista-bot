@@ -6,7 +6,7 @@ It is just a simple barista that is invoked by commenting on an Issue with the t
 
 # Screencap
 
-![barista](https://user-images.githubusercontent.com/253202/37861895-0155254c-2f1a-11e8-9bf5-15936710a24c.gif)
+![barista-bot](https://user-images.githubusercontent.com/253202/37862009-8f46000e-2f1c-11e8-8020-a84bf304e697.gif)
 
 
 # Install Instructions
