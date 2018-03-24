@@ -124,16 +124,21 @@ module.exports = (robot, {name, action}) => {
     const currentCommand = ACTIVE_COMMANDS[id]
 
     if (currentCommand) {
+      const isInitialClick = ! currentCommand.command.state
+      const redirectUrl = currentCommand.context.payload.comment.html_url
+
+      // Execute the command with the new state
       await currentCommand.command.exec(currentCommand.context, id, null, state)
 
-      // Redirects are too slow for a new message to pop up so
-      // this hacky code waits 10sec before redirecting back so GitHub
+      // Redirects are too slow for a new Edit to an existing message to pop up so
+      // this hacky code waits a few seconds before redirecting back so GitHub
       // has time to update the Page.
+      if (isInitialClick) {
+        res.end(`<html><head><body>Your information has been noted. Redirecting you back to the comment in 2 seconds. This will not happen again <script>window.setTimeout(function() { window.location.replace("${redirectUrl}") }, 2 * 1000) </script></body></html>`)
+      } else {
+        res.redirect(redirectUrl)
+      }
 
-      const redirectUrl = currentCommand.context.payload.comment.html_url
-      // res.redirect(redirectUrl)
-
-      res.end(`<html><head><body>Your information has been noted. Redirecting you back to the comment in 5 seconds... <script>window.setTimeout(function() { window.location.replace("${redirectUrl}") }, 5 * 1000) </script></body></html>`)
     } else {
       res.end('I am sorry but it seems that you took too long to finish ordering the coffee. You can try again by creating a comment that begins with /coffee')
     }
