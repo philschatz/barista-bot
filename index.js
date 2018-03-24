@@ -8,13 +8,6 @@ module.exports = (robot) => {
     action: async (command, args, context, previousMessageToken) => {
       const state = command.getState()
 
-      const cancelButton = {
-        type: 'button',
-        text: ':x: Cancel Order',
-        value: await command.extendState({orderStep: 'CANCEL'})
-      }
-
-
       if (!state) {
         return command.createResponse(':coffee: I am coffeebot and I am here to take your order. What would you like to do?', {
           attachments: [
@@ -24,8 +17,7 @@ module.exports = (robot) => {
               text: 'Start a coffee order',
               // value is what is sent from Slack to us when the user clicks this button. It is a token (hash) that points to the new state
               value: await command.extendState({orderStep: 'LOAD_OPTIONS'})
-            },
-            cancelButton
+            }
           ]
         });
 
@@ -40,8 +32,7 @@ module.exports = (robot) => {
                 { text: 'Cappuccino', value: await command.extendState({orderStep: 'CHOOSE_MILK', coffeeType: 'cappuccino'}) },
                 { text: 'Americano',  value: await command.extendState({orderStep: 'CHOOSE_MILK', coffeeType: 'americano'}) },
               ]
-            },
-            cancelButton
+            }
           ]
         })
       } else if (state['orderStep'] === 'CHOOSE_MILK') {
@@ -55,8 +46,7 @@ module.exports = (robot) => {
                 { text: '2%',   value: await command.extendState({orderStep: 'CHOOSE_SUGAR', milkType: '2%'}) },
                 { text: 'Soy',  value: await command.extendState({orderStep: 'CHOOSE_SUGAR', milkType: 'soy'}) },
               ]
-            },
-            cancelButton
+            }
           ]
         })
       } else if (state['orderStep'] === 'CHOOSE_SUGAR') {
@@ -71,13 +61,10 @@ module.exports = (robot) => {
               type: 'button',
               text: 'No thank you',
               value: await command.extendState({orderStep: 'FINISH', sugar: 'no sugar'})
-            },
-            cancelButton
+            }
           ]
         })
-      } else if (state['orderStep'] === 'CANCEL') {
-        return command.finish(previousMessageToken, `Your coffee order has been **cancelled**. Thank you for using coffeebot!`)
-      } else {
+      } else if (state['orderStep'] === 'FINISH') {
         // clear the state upon sending this message because we are done.
         return command.finish(previousMessageToken, `:white_check_mark: **${state['coffeeType']}**\n:white_check_mark: **${state['milkType']} milk**\n:white_check_mark: **${state['sugar']}**\nYour ${state['coffeeType']} with ${state['milkType']} milk with ${state['sugar']} is ready!\n:coffee:`)
       }
