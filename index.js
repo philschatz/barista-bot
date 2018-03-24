@@ -8,7 +8,7 @@ module.exports = (robot) => {
     action: async (command, args, context, previousMessageToken) => {
       const state = command.getState()
       if (!state) {
-        return command.createResponse('I am coffeebot and I am here to take your order. What would you like to do?', {
+        return command.createResponse(':coffee: I am coffeebot and I am here to take your order. What would you like to do?', {
           attachments: [
             {
               type: 'button',
@@ -35,7 +35,7 @@ module.exports = (robot) => {
           ]
         })
       } else if (state['orderStep'] === 'CHOOSE_MILK') {
-        return command.editResponse(previousMessageToken, 'What type of milk would you like?', {
+        return command.editResponse(previousMessageToken, `:white_check_mark: **${state['coffeeType']}**\nWhat type of milk would you like?`, {
           attachments: [
             {
               type: 'select',
@@ -50,7 +50,7 @@ module.exports = (robot) => {
         })
       } else {
         // clear the state upon sending this message because we are done.
-        return command.finish(previousMessageToken, `Your ${state['coffeeType']} with ${state['milkType']} milk is ready!`)
+        return command.finish(previousMessageToken, `:white_check_mark: **${state['coffeeType']}**\n:white_check_mark: **${state['milkType']} milk**\nYour ${state['coffeeType']} with ${state['milkType']} milk is ready!\n:coffee:`)
       }
     }
   })
