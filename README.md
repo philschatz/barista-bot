@@ -11,7 +11,7 @@ It is just a simple barista that is invoked by commenting on an Issue with the t
 
 # Install Instructions
 
-Just [Install the probot-coffee App](github.com/apps/probot-coffee) to one of your repositories.
+Just [Install the barista-bot App](github.com/apps/barista-bot) to one of your repositories.
 
 
 # About
