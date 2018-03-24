@@ -12,3 +12,8 @@ It is just a simple barista that is invoked by commenting on an Issue with the t
 # Install Instructions
 
 Just [Install the probot-coffee App](github.com/apps/probot-coffee) to one of your repositories.
+
+
+# About
+
+This bot is inspired by the [coffeebot example](https://github.com/slackapi/sample-message-menus-node) for using [Slack Interactive Messages](https://api.slack.com/interactive-messages)
