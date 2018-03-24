@@ -132,7 +132,7 @@ module.exports = (robot, {name, action}) => {
       // Redirects are too slow for a new Edit to an existing message to pop up so
       // this hacky code waits a few seconds before redirecting back so GitHub
       // has time to update the Page.
-      res.end(`<html><head><body>Thanks! Redirecting you back to <a href="${redirectUrl}">${redirectUrl}</a>... <script>window.setTimeout(function() { window.location.replace("${redirectUrl}") }, 1 * 1000) </script></body></html>`)
+      res.end(`<html><head><body>Thanks! Redirecting you back to <a href="${redirectUrl}">GitHub</a>... <script>window.setTimeout(function() { window.location.replace("${redirectUrl}") }, 1 * 1000) </script></body></html>`)
 
     } else {
       res.end('I am sorry but it seems that you took too long to finish ordering the coffee. You can try again by creating a comment that begins with /coffee')
