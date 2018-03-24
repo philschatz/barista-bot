@@ -124,7 +124,7 @@ module.exports = (robot, {name, action}) => {
     const currentCommand = ACTIVE_COMMANDS[id]
 
     if (currentCommand) {
-      await currentCommand.command.exec(currentCommand.context, null, state)
+      await currentCommand.command.exec(currentCommand.context, id, null, state)
 
       // Redirects are too slow for a new message to pop up so
       // this hacky code waits 10sec before redirecting back so GitHub
