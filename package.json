@@ -1,5 +1,5 @@
 {
-  "main": "coffeebot.js",
+  "main": "index.js",
   "scripts": {
     "start": "probot run ./index.js",
     "test": "jest && standard --fix"
