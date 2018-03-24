@@ -124,7 +124,7 @@ module.exports = (robot, {name, action}) => {
     const currentCommand = ACTIVE_COMMANDS[id]
 
     if (currentCommand) {
-      const isInitialClick = ! currentCommand.command.state
+      const isInitialClick = ! currentCommand.command.commandObj.state
       const redirectUrl = currentCommand.context.payload.comment.html_url
 
       // Execute the command with the new state
