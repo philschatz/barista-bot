@@ -8,27 +8,27 @@ class CommandResponse {
     this.options = options
   }
 
-  getMarkdown () {
+  getMarkdown (id) {
     if (this.options) {
       return `${this.text}
 
 ---
-${this.getOptionsMarkdown()}
+${this.getOptionsMarkdown(id)}
 `
     } else {
       return this.text
     }
   }
 
-  getOptionsMarkdown () {
+  getOptionsMarkdown (id) {
     if (this.options.attachments) {
       return this.options.attachments.map((attachment) => {
         const {type, color, text, value /*for a button*/, options /*for a select*/} = attachment
         if (type === 'button') {
-          return `[${text}](${ROOT_URL}/commands/github?state=${encodeURIComponent(JSON.stringify(value))})`
+          return `[${text}](${ROOT_URL}/commands/github?id=${id}&state=${encodeURIComponent(JSON.stringify(value))})`
         } else if (type === 'select') {
           const optionsMarkdown = options.map((option) => {
-            return `- [${option.text}](${ROOT_URL}/commands/github?state=${encodeURIComponent(JSON.stringify(option.value))})`
+            return `- [${option.text}](${ROOT_URL}/commands/github?id=${id}&state=${encodeURIComponent(JSON.stringify(option.value))})`
           }).join('\n')
           return `${text} _(select one of the following)_\n\n${optionsMarkdown}\n`
         } else {
@@ -64,10 +64,6 @@ class CommandObj {
   async extendState(obj) {
     return Object.assign({}, this.state, obj)
   }
-
-  _setState(obj) {
-    this.state = obj
-  }
 }
 
 
@@ -88,18 +84,19 @@ class Command {
     const command = context.payload.comment.body.match(this.matcher)
 
     if (command && this.name === command[1]) {
-      THE_CURRENT_COMMAND = {context, command: this} // so we have the github connection
-      await this.exec(context, command[2], this.commandObj.state)
+      const id = ('' + Math.random()).substring(2,8) // Generate a random ID for the command
+      ACTIVE_COMMANDS[id] = {context, command: this} // so we have the github connection
+      await this.exec(context, id, command[2], this.commandObj.state)
     }
   }
 
-  async exec (context, args, state) {
+  async exec (context, id, args, state) {
     this.commandObj.state = state
     this.commandObj.context = context
     const response = await this.callback(this.commandObj, args, context, this.previousMessageToken)
     if (response) {
       let issue
-      const body = response.getMarkdown()
+      const body = response.getMarkdown(id)
       if (response.previousMessageToken) {
         issue = await context.github.issues.editComment(context.repo({id: this.previousMessageToken, body: body}))
       } else {
@@ -111,7 +108,7 @@ class Command {
 }
 
 // This is a lookup for the web callbacks so that the state changes when the user clicks on a link
-let THE_CURRENT_COMMAND = null
+const ACTIVE_COMMANDS = {}
 
 module.exports = (robot, {name, action}) => {
   const command = new Command(name, action)
@@ -122,10 +119,25 @@ module.exports = (robot, {name, action}) => {
   const app = robot.route('/commands')
   // Add a new route
   app.get('/github', async (req, res) => {
+    const id = req.query.id
     const state = JSON.parse(req.query.state)
-    await THE_CURRENT_COMMAND.command.exec(THE_CURRENT_COMMAND.context, null, state)
+    const currentCommand = ACTIVE_COMMANDS[id]
 
-    res.redirect(THE_CURRENT_COMMAND.context.payload.comment.html_url)
+    if (currentCommand) {
+      await currentCommand.command.exec(currentCommand.context, null, state)
+
+      // Redirects are too slow for a new message to pop up so
+      // this hacky code waits 10sec before redirecting back so GitHub
+      // has time to update the Page.
+
+      const redirectUrl = currentCommand.context.payload.comment.html_url
+      // res.redirect(redirectUrl)
+
+      res.end(`<html><head><body>Your information has been noted. Redirecting you back to the comment in 5 seconds... <script>window.setTimeout(function() { window.location.replace("${redirectUrl}") }, 5 * 1000) </script></body></html>`)
+    } else {
+      res.end('I am sorry but it seems that you took too long to finish ordering the coffee. You can try again by creating a comment that begins with /coffee')
+    }
+
   })
 
 }
